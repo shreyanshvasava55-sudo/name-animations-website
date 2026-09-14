@@ -366,6 +366,70 @@ h1{
     background:linear-gradient(135deg,#260009,#8b1e3f,#d6336c);
 }
 
+.night{
+    background:linear-gradient(135deg,#020617,#0b1f4d,#1e3a8a);
+}
+
+.night::before{
+    content:"";
+    position:fixed;
+    top:8vh;
+    right:9vw;
+    width:105px;
+    height:105px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#fffde7 0 18%,#f8e7a1 48%,#e0b95d 100%);
+    box-shadow:0 0 28px rgba(255,244,188,.75),0 0 75px rgba(137,194,255,.3);
+    pointer-events:none;
+    z-index:1;
+    animation:moonGlow 3.5s ease-in-out infinite alternate;
+}
+
+.night::after{
+    content:"✦  ·  ✧     ·  ✦     ✧  ·     ✦  ·  ✧";
+    position:fixed;
+    top:7vh;
+    left:0;
+    width:100%;
+    color:rgba(255,255,255,.8);
+    font-size:18px;
+    letter-spacing:2.3vw;
+    pointer-events:none;
+    z-index:1;
+    animation:starDrift 13s linear infinite;
+}
+
+@keyframes moonGlow{
+    from{transform:scale(.96);opacity:.88;}
+    to{transform:scale(1.04);opacity:1;}
+}
+
+@keyframes starDrift{
+    from{transform:translateY(-2vh);opacity:.35;}
+    50%{opacity:.9;}
+    to{transform:translateY(9vh);opacity:.35;}
+}
+
+.nightParticle{
+    position:fixed;
+    top:-10vh;
+    z-index:2;
+    pointer-events:none;
+    animation:nightFall linear forwards;
+}
+
+@keyframes nightFall{
+    from{
+        transform:translateY(-10vh) rotate(0deg);
+        opacity:0;
+    }
+    12%{opacity:.75;}
+    to{
+        transform:translateY(110vh) rotate(180deg);
+        opacity:0;
+    }
+}
+
 
 @media(max-width:380px){
 
@@ -466,7 +530,7 @@ h1{
 
 
 <!-- ==================================================
-     SCREEN 2 : 5 OPTIONS
+     SCREEN 2 : 6 OPTIONS
 ================================================== -->
 
 <section id="screen2" class="screen">
@@ -591,6 +655,28 @@ h1{
 
             <div class="small">
                 Gratitude ❤️
+            </div>
+
+        </button>
+
+
+        <!-- OPTION 6 -->
+
+        <button
+            class="option"
+            onclick="createAnimation('night')"
+        >
+
+            <div class="optionIcon">
+                🌙✨
+            </div>
+
+            <div class="optionTitle">
+                Good Night 🌙✨
+            </div>
+
+            <div class="small">
+                Sweet Dreams 💫
             </div>
 
         </button>
@@ -914,6 +1000,31 @@ const animations = {
 
         confetti:false
 
+    },
+
+
+    night:{
+
+        theme:"night",
+
+        title:name =>
+            `Good Night ${name}! 🌙✨`,
+
+        message:name =>
+            `Good night, ${name}! Leave today's worries behind, relax and get some peaceful rest. Tomorrow is a fresh new day. Sweet dreams! 🌙💫😴`,
+
+        particles:[
+            "✦",
+            "✧",
+            "⋆",
+            "✨",
+            "💫"
+        ],
+
+        nightParticles:true,
+
+        confetti:false
+
     }
 
 };
@@ -983,10 +1094,21 @@ function createAnimation(type){
 
     /* Start particles */
 
-    createParticles(
-        data.particles,
-        50
-    );
+    if(data.nightParticles){
+
+        createNightParticles(
+            data.particles,
+            42
+        );
+
+    }else{
+
+        createParticles(
+            data.particles,
+            50
+        );
+
+    }
 
 
     /* Birthday/Friend confetti */
@@ -1127,6 +1249,75 @@ function createParticles(items,count){
 
 
 /* ==================================================
+   NIGHT PARTICLES
+================================================== */
+
+function createNightParticles(items,count){
+
+    for(let i=0;i<count;i++){
+
+        setTimeout(function(){
+
+            const particle =
+                document.createElement("div");
+
+
+            particle.className =
+                "nightParticle";
+
+
+            particle.textContent =
+                items[
+                    Math.floor(
+                        Math.random() *
+                        items.length
+                    )
+                ];
+
+
+            particle.style.left =
+                Math.random()*100 +
+                "vw";
+
+
+            particle.style.fontSize =
+                (12 +
+                Math.random()*14) +
+                "px";
+
+
+            particle.style.animationDuration =
+                (6 +
+                Math.random()*5) +
+                "s";
+
+
+            particle.style.opacity =
+                .35 +
+                Math.random()*.35;
+
+
+            document.body.appendChild(
+                particle
+            );
+
+
+            setTimeout(function(){
+
+                particle.remove();
+
+            },11000);
+
+
+        },i*130);
+
+    }
+
+}
+
+
+
+/* ==================================================
    CONFETTI
 ================================================== */
 
@@ -1185,7 +1376,7 @@ function clearEffects(){
 
     document
     .querySelectorAll(
-        ".particle,.confetti"
+        ".particle,.nightParticle,.confetti"
     )
     .forEach(function(el){
 
